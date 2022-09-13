@@ -1,0 +1,35 @@
+﻿@model EPHARMA.Models.Appointment
+@{
+    ViewData["Title"] = "CreatePrescription";
+}
+
+<form asp-action="CreatePrescription">
+    <div class="row clearfix">
+        <input type="hidden" name="id" value="@Model.AppointmentId" asp-for="AppointmentId" />
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label asp-for="Customers.CustomerName" class="control-label">Customer Name</label>
+                <input asp-for="Customers.CustomerName" class="form-control" readonly />
+                <span asp-validation-for="Customers.CustomerName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label asp-for="Doctors.DoctorName" class="control-label">Doctor Name</label>
+                <input asp-for="Doctors.DoctorName" class="form-control" readonly />
+                <span asp-validation-for="Doctors.DoctorName" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+<textarea class="ckeditor" name="editortext">@ViewBag.Editortext</textarea>
+    <button id="SubmitButton" type="submit" class="btn btn-primary btn-round">Submit</button>
+</form>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            CKEDITOR.replace('CkEditorText')
+        });
+    </script>
+}
