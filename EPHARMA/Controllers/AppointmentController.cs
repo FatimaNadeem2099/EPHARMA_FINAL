@@ -20,7 +20,7 @@ namespace EPHARMA.Controllers
         }
         public IActionResult Index()
         {
-            var AllAppointments = _context.Appointments.Where(x => x.Status && x.DoctorId==1002);
+            var AllAppointments = _context.Appointments.Include(d => d.Doctors).Where(x => x.Status);
             return View(AllAppointments);
         }
 
@@ -66,7 +66,7 @@ namespace EPHARMA.Controllers
             {
                 _appointment = _context.Appointments.Include(c => c.Customers).Include(d => d.Doctors).Where(d => d.AppointmentId == id).FirstOrDefault();
             }
-            ViewBag.Editortext = "<p><strong>Patient Name:&nbsp;</strong>"+_appointment.Customers.CustomerName+"</p><p><strong> Patient Age: &nbsp;</strong>"+ _appointment.Customers.Age+"</p><p><strong> Date:&nbsp;</strong>"+DateTime.Now.Date.ToShortDateString()+"</p><p><strong> Doctor:&nbsp;</strong>"+_appointment.Doctors.DoctorName+"</p><p> &nbsp;</p> ";
+         //   ViewBag.Editortext = "<p><strong>Patient Name:&nbsp;</strong>"+_appointment.Customers.CustomerName+"</p><p><strong> Patient Age: &nbsp;</strong>"+ _appointment.Customers.Age+"</p><p><strong> Date:&nbsp;</strong>"+DateTime.Now.Date.ToShortDateString()+"</p><p><strong> Doctor:&nbsp;</strong>"+_appointment.Doctors.DoctorName+"</p><p> &nbsp;</p> ";
             return View(_appointment);
         }
         [HttpPost]
@@ -74,6 +74,10 @@ namespace EPHARMA.Controllers
         {
             _appointment = _context.Appointments.Include(c => c.Customers).Include(d => d.Doctors).Where(d => d.AppointmentId == id).FirstOrDefault();
            var PreText = "<p><strong>Patient Name:&nbsp;</strong>" + _appointment.Customers.CustomerName + "</p><p><strong> Patient Age: &nbsp;</strong>" + _appointment.Customers.Age + "</p><p><strong> Date:&nbsp;</strong>" + DateTime.Now.Date.ToShortDateString() + "</p><p><strong> Doctor:&nbsp;</strong>" + _appointment.Doctors.DoctorName + "</p><p> &nbsp;</p> ";
+            _appointment.HasPrescription = true;
+            _appointment.Prescription = PreText + editortext;
+            _context.Appointments.Update(_appointment);
+            _context.SaveChanges();
             return RedirectToAction("Index");
         }
         [HttpDelete]

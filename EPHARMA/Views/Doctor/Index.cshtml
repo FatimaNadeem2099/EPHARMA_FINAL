@@ -96,6 +96,11 @@
                                                             <i onclick="@("window.location.href='" + @Url.Action("Create", "DoctorTimeTable", new {id = item.DoctorId}) + "'");" class="bx bx-time"></i>
                                                         </div>
                                                     </div>
+                                                    <div class="fonticon-container">
+                                                        <div class="fonticon-wrap" style="margin-bottom: 0px;">
+                                                            <i onclick="@("window.location.href='" + @Url.Action("WeeklyTimeTable", "DoctorTimeTable", new {id = item.DoctorId}) + "'");" class="bx bx-spreadsheet"></i>
+                                                        </div>
+                                                    </div>
 
                                                     @if (!item.OnlineStatus)
                                                     {

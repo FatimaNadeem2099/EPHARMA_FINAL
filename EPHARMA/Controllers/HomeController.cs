@@ -20,16 +20,24 @@ namespace EPHARMA.Controllers
 
         public IActionResult Index()
         {
-            List<string> intervals = new List<string>();
-            var v = ((DateTime.Now.AddHours(2) - DateTime.Now).TotalMinutes) / 15;
-            var start = DateTime.Now;
-            var startTemp = DateTime.Now;
-            for (var i = 1; i <= 8; i++)
+           /* DateTime currentDate = DateTime.Now;
+            var DateList = new List<KeyValuePair<string, DateTime>>();
+            for(int i=1; i < 8; i++)
             {
-                var endTime = DateTime.Now.AddMinutes(15 * i);
-                var a = startTemp.ToShortTimeString() + " - " + endTime.ToShortTimeString();
-                startTemp = endTime;
-            }
+                var newdate = currentDate.AddDays(i).Date;
+                var newentry = new KeyValuePair<string, DateTime>(newdate.DayOfWeek.ToString(), newdate);
+                DateList.Add(newentry);
+            }*/
+            /*     List<string> intervals = new List<string>();
+                 var v = ((DateTime.Now.AddHours(2) - DateTime.Now).TotalMinutes) / 15;
+                 var start = DateTime.Now;
+                 var startTemp = DateTime.Now;
+                 for (var i = 1; i <= 8; i++)
+                 {
+                     var endTime = DateTime.Now.AddMinutes(15 * i);
+                     var a = startTemp.ToShortTimeString() + " - " + endTime.ToShortTimeString();
+                     startTemp = endTime;
+                 }*/
             return View();
         }
 

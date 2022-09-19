@@ -3,6 +3,7 @@ using EPHARMA.Models;
 using EPHARMA.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,63 @@ namespace EPHARMA.Controllers
         public IActionResult Index()
         {
             
-            var doctorTimetable = _context.DoctorTimeTables.Where(x => x.Status).GroupBy(x => x.DoctorId).ToList();
+            var doctorTimetable = _context.DoctorTimeTables.Include(d => d.Doctors).Where(x => x.Status).ToList();
 
             return View(doctorTimetable);
         }
-        public IActionResult Create(int id)
+        public IActionResult WeeklyTimetable(int id)
+        {
+            //a.Date.Date >= DateTime.Now.Date && ADD CONDITION
+            var WeeklyTimetable = _context.DoctorWeeklyTimeSheets.Include(x => x.Doctors).Where(a =>  a.DoctorId == id).ToList();
+            List<DoctorWeeklyTimeSheet> monday = new List<DoctorWeeklyTimeSheet>();
+            List<DoctorWeeklyTimeSheet> tuesday = new List<DoctorWeeklyTimeSheet>();
+            List<DoctorWeeklyTimeSheet> wednesday = new List<DoctorWeeklyTimeSheet>();
+            List<DoctorWeeklyTimeSheet> thursday = new List<DoctorWeeklyTimeSheet>();
+            List<DoctorWeeklyTimeSheet> friday = new List<DoctorWeeklyTimeSheet>();
+            List<DoctorWeeklyTimeSheet> saturday = new List<DoctorWeeklyTimeSheet>();
+            List<DoctorWeeklyTimeSheet> sunday = new List<DoctorWeeklyTimeSheet>();
+            foreach (var time in WeeklyTimetable)
+            {
+                if(time.WeekDay == "Monday")
+                {
+                    monday.Add(time);
+                }
+                if (time.WeekDay == "Tuesday")
+                {
+                    tuesday.Add(time);
+                }
+                if (time.WeekDay == "Wednesday")
+                {
+                    wednesday.Add(time);
+                }
+                if (time.WeekDay == "Thursday")
+                {
+                    thursday.Add(time);
+                }
+                if (time.WeekDay == "Friday")
+                {
+                    friday.Add(time);
+                }
+                if (time.WeekDay == "Saturday")
+                {
+                    saturday.Add(time);
+                }
+                if (time.WeekDay == "Sunday")
+                {
+                    sunday.Add(time);
+                }
+            }
+            List<DoctorWeeklyTimeSheet> newWeeklyTimeTable = new List<DoctorWeeklyTimeSheet>();
+            newWeeklyTimeTable.AddRange(monday);
+            newWeeklyTimeTable.AddRange(tuesday);
+            newWeeklyTimeTable.AddRange(wednesday);
+            newWeeklyTimeTable.AddRange(thursday);
+            newWeeklyTimeTable.AddRange(friday);
+            newWeeklyTimeTable.AddRange(saturday);
+            newWeeklyTimeTable.AddRange(sunday);
+            return View(newWeeklyTimeTable);
+        }
+            public IActionResult Create(int id)
         {
             var docTT = _context.DoctorTimeTables.Where(a => a.DoctorId == id).FirstOrDefault();
             if (docTT != null)
@@ -43,6 +96,14 @@ namespace EPHARMA.Controllers
         {
             try
             {
+                DateTime currentDate = DateTime.Now;
+                var DateList = new List<KeyValuePair<string, DateTime>>();
+                for (int i = 1; i < 8; i++)
+                {
+                    var newdate = currentDate.AddDays(i).Date;
+                    var newentry = new KeyValuePair<string, DateTime>(newdate.DayOfWeek.ToString(), newdate);
+                    DateList.Add(newentry);
+                }
 
                 foreach (var timetable in doctorTimeTable.DoctorTimeTables)
                 {
@@ -63,6 +124,7 @@ namespace EPHARMA.Controllers
                         doctorWeeklyTimeSheet.Available = true;
                         doctorWeeklyTimeSheet.TimeRange = TimeRange;
                         doctorWeeklyTimeSheet.WeekDay = timetable.Day;
+                        doctorWeeklyTimeSheet.Date = DateList.Where(a => a.Key == timetable.Day).FirstOrDefault().Value;
                         doctorWeeklyTimeSheet.DoctorId = timetable.DoctorId;
                         _context.DoctorWeeklyTimeSheets.Add(doctorWeeklyTimeSheet);
                     }

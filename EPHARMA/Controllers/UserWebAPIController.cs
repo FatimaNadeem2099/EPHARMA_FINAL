@@ -394,5 +394,39 @@ namespace EPHARMA.Controllers
         }
 
 
+        public async Task<IActionResult> GetCustomerAppointments(int id)
+        {
+            try
+            {
+                var appointments = _db.Appointments.Include(c => c.Doctors).ThenInclude(d => d.Categories).Where(a => a.CustomerId == id).Select(a => new
+                {
+                    a.AppointmentId,
+                    a.CustomerId,
+                    a.DoctorId,
+                    a.AppointmentCode,
+                    a.AppointmentDay,
+                    a.AppointmentStatus,
+                    a.IsFinished,
+                    a.AppointmentDate,
+                    a.StartTime,
+                    a.EndTime,
+                    a.NumberOfSlots,
+                    a.HasPrescription,
+                    a.Prescription,
+                    DoctorName = a.Doctors.DoctorName,
+                    DoctorCategory = a.Doctors.Categories.CategoryTitle,
+                    AppointmentBilling = _db.AppointmentBillings.Where(z => z.AppointmentId == a.AppointmentId).FirstOrDefault()
+                }).ToList();
+
+
+                return Ok(appointments);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Message" + e);
+            }
+        }
+
+
     }
 }
