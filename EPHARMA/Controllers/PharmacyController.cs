@@ -32,7 +32,7 @@ namespace EPHARMA.Controllers
         }
         public IActionResult Index()
         {
-            var AllPharmacies = _context.Pharmacies.Where(x => x.Status);
+            var AllPharmacies = _context.Pharmacies.Include(a => a.Vendors).Where(x => x.Status);
             return View(AllPharmacies);
         }
 

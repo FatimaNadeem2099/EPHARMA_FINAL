@@ -428,5 +428,52 @@ namespace EPHARMA.Controllers
         }
 
 
+
+        public async Task<IActionResult> GetCustomerOrders(int id)
+        {
+            try
+            {
+                var orders = _db.Orders.Include(c => c.Pharmacies).Where(a => a.CustomerId == id).Select(a => new
+                {
+                    a.OrderId,
+                    a.PharmacyId,
+                    PharmacyImg=a.Pharmacies.PharmacyLogo,
+                    a.Pharmacies.PharmacyName,
+                    a.SpecialInstructions,
+                    a.Location,
+                    a.OrderAddress,
+                    a.IsFinished,
+                    HasReview= _db.Reviews.Where(r => r.Type=="order" && r.TypeId==a.OrderId).FirstOrDefault() == null ? false : true,
+                    a.OrderCode,
+                    a.Remarks,
+                    a.SubTotal,
+                    a.TotalBill,
+                    a.HasPrescriptionDrugs,
+                    a.OrderStatus,
+                    OrderDateTime = a.OrderDateTime.ToLongDateString(),
+                    CustomerId = a.CustomerId,
+                    OrderMedicines = _db.OrderMedicines.Include(m => m.Medicines).Where(z => z.OrderId == a.OrderId).Select(b => new {
+                        b.MedicineId,
+                        b.Medicines.MedicineName,
+                        TotalPrice = b.Medicines.MedicinePrice * b.Quantity,
+                        b.Medicines.MedicinePrice,
+                        b.Quantity,
+                        IsPrescribed=false,
+                        MedicineImage= b.Medicines.MedicineImage,
+
+                    }).ToList()
+                }).ToList();
+
+
+                return Ok(orders);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Message" + e);
+            }
+        }
+
+
+
     }
 }

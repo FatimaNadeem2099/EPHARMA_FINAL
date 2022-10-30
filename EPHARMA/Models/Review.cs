@@ -20,6 +20,7 @@ namespace EPHARMA.Models
         public string Type { get; set; }
         public int TypeId { get; set; }
         public float Rating { get; set; }
+        public string comment { get; set; }
         public bool Status { get; set; } = true;
         public DateTime Date { get; set; } = getDate();
         public static DateTime getDate()

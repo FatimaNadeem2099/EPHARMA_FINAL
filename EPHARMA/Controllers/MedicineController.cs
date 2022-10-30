@@ -5,6 +5,7 @@ using EPHARMA.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace EPHARMA.Controllers
         }
         public IActionResult Index()
         {
-            var AllMedicines = _context.Medicines.Where(x => x.Status);
+            var AllMedicines = _context.Medicines.Include(x =>x.Pharmacies).Where(x => x.Status);
             return View(AllMedicines);
         }
         public IActionResult Create(int id)

@@ -22,6 +22,9 @@
                                 <thead>
                                     <tr>
                                         <th>
+                                            @Html.DisplayNameFor(model => model.PharmacyLogo)
+                                        </th>
+                                        <th>
                                             @Html.DisplayNameFor(model => model.PharmacyName)
                                         </th>
                                         <th>
@@ -30,9 +33,7 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.Email)
                                         </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.PharmacyLogo)
-                                        </th>
+
                                         <th>
                                             @Html.DisplayNameFor(model => model.Status)
                                         </th>
@@ -44,27 +45,64 @@
                                     {
                                     <tr>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.PharmacyName)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.VendorId)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Email)
-                                        </td>
-                                        <td>
                                             <img src="~/images/@item.PharmacyLogo"
                                                  class="rounded-lg"
                                                  height="50" width="50"
                                                  asp-append-version="true" />
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.Status)
+                                            @Html.DisplayFor(modelItem => item.PharmacyName)
                                         </td>
                                         <td>
-                                            <a asp-action="Create" asp-route-id="@item.PharmacyId"><i class='bx bxs-eyedropper' style="height:25px;width:25px;color:#7367f0"></i></a> |
-                                            <a href="#" onclick="DeleteRecord(@item.PharmacyId, '/Pharmacy/Delete')"><i class="Danger bx bx-trash-alt" style="height:25px;width:25px;color:#ea5455"></i></a>
+                                            @Html.DisplayFor(modelItem => item.Vendors.VendorName)
                                         </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Email)
+                                        </td>
+
+                                        <td>
+                                            @if (item.Status == true)
+                                            {
+                                                <div style="color:green">Active</div>
+                                            }
+                                            else
+                                            {
+                                                <div style="color:red">Deactive</div>
+                                            }
+
+                                        </td>
+                                      
+
+                                        <td>
+                                            <div class="fonticon-container">
+                                                <div class="fonticon-wrap" style="margin-bottom: 0px;">
+                                                    <i onclick="@("window.location.href='" + @Url.Action("Create", "Pharmacy", new {id = item.PharmacyId}) + "'");" class="bx bx-edit"></i>
+                                                </div>
+                                            </div>
+                                           
+                                         
+
+                                         
+
+                                            @if (!item.Status)
+                                            {
+                                                <div class="fonticon-container">
+                                                    <div class="fonticon-wrap" style="margin-bottom: 0px;">
+                                                        <i onclick="ChangeDoctorStatus(@item.PharmacyId)" class="bx bx-trash"></i>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="fonticon-container">
+                                                    <div class="fonticon-wrap" style="margin-bottom: 0px;">
+                                                        <i onclick="ChangeDoctorStatus(@item.PharmacyId)" class="bx bx-trash"></i>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        </td>
+
                                     </tr>
                                     }
                                 </tbody>

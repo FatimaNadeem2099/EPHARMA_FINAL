@@ -1,6 +1,6 @@
 ﻿using EPHARMA.Data;
 using EPHARMA.Models;
-using EPHARMA.Models.ViewModels;
+using EPHARMA.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +24,15 @@ namespace EPHARMA.Controllers
             List<Order> AllOrders = _context.Orders.Include(x => x.Pharmacies).Include(x => x.Customers).Where(x => x.Status).ToList();      
             
             return View(AllOrders);
+        }
+
+        public IActionResult Details(int id)
+        {
+            OrderViewModel order = new OrderViewModel();
+             order.Order = _context.Orders.Include(c => c.Customers).Where(a => a.OrderId == id).FirstOrDefault();
+            order.OrderMedicine = _context.OrderMedicines.Include(m => m.Medicines).Where(a => a.OrderId == id).ToList();
+            order.Prescription = _context.OrderPrescriptions.Where(a => a.OrderId == id).FirstOrDefault();
+            return View(order);
         }
         public IActionResult Create(int id)
         {

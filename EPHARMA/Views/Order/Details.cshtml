@@ -1,0 +1,184 @@
+﻿@*@model EPHARMA.ViewModel.OrderViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+<form asp-action="Create" enctype="multipart/form-data" class="form form-vertical">
+    <section id="multiple-column-form">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Order Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" asp-for="Order.OrderId" />
+
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row clearfix">
+                            @if (Model.Order.HasPrescriptionDrugs)
+                            {
+                                <div class="col-sm-12">
+                                    <h4>Prescription Image</h4>
+                                    <div class="row clearfix">
+
+                                        <div class="col-sm-12">
+                                            @if (Model.Prescription.Image == null)
+                                            {
+                                                <img src="~/Images/ChooseImage.jpg" id="showProfileImageId" class="float-right" style="width:240px; height:150px;" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/Images/@Model.Prescription.Image" id="showCoverImageId" class="float-right" style="width:240px; height:150px;" />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order.Customers.CustomerName" class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Email</label>
+                                    <input asp-for="Order.Customers.CustomerEmail" class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Phone</label>
+                                    <input asp-for="Order.Customers.PhoneNumber" class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Age</label>
+                                    <input asp-for="Order.Customers.Age" class="form-control" readonly />
+                                </div>
+
+                            </div>
+
+
+
+
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Pharmacy Name</label>
+                                    <input asp-for="Order.Pharmacies.PharmacyName" class="form-control" readonly />
+                                </div>
+
+                            </div><div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Pharmacy Name</label>
+                                    <input asp-for="Order.Pharmacies.Email" class="form-control" readonly />
+                                </div>
+
+                            </div><div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Pharmacy Name</label>
+                                    <input asp-for="Order.Pharmacies.Contact" class="form-control" readonly />
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label class="control-label">Customer Name</label>
+                                    <input asp-for="Order." class="form-control" readonly />
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label asp-for="CategoryId" class="control-label">Category</label>
+                                    <select asp-for="CategoryId" class="form-control">
+                                        <option value="0">Please select a category</option>
+                                        @foreach (var item in ViewBag.CategoryId)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label asp-for="Education" class="control-label">Education</label>
+                                    <textarea rows="3" asp-for="Education" class="form-control" required></textarea>
+                                    <span asp-validation-for="Education" class="text-danger"></span>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-sm-12">
+                                <button id="SubmitButton" type="submit" class="btn btn-primary btn-round">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+
+*@

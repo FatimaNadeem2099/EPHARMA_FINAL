@@ -46,7 +46,7 @@
                                         </th>
                                                                              
                                         <th>
-                                            @Html.DisplayNameFor(model => model.AppointmentDate)
+                                            Appointment Date
                                         </th>
                                         <th>Actions</th>
                                     </tr>
@@ -72,7 +72,8 @@
                                         </td>
                                        
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.AppointmentDate)
+                                            @*@Html.DisplayFor(modelItem => item.AppointmentDate)*@
+                                           @item.AppointmentDay, @item.AppointmentDate.ToShortDateString()
                                         </td>
                                        
                                         <td class=" mt-3">

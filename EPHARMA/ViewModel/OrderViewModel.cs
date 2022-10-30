@@ -1,14 +1,15 @@
-﻿using System;
+﻿using EPHARMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EPHARMA.Models.ViewModels
+namespace EPHARMA.ViewModel
 {
     public class OrderViewModel
     {
-      public  List<Order> OrderList { get; set; } = new List<Order>();
+      public  Order Order { get; set; } = new Order();
         public OrderPrescription Prescription { get; set; } = new OrderPrescription();
-        public OrderMedicine OrderMedicine { get; set; } = new OrderMedicine();
+        public List<OrderMedicine> OrderMedicine { get; set; } = new List<OrderMedicine>();
     }
 }
