@@ -473,7 +473,37 @@ namespace EPHARMA.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<Object> CreateReview(IFormCollection form)
+        {
+            try
+            {
+                var Review = JsonConvert.DeserializeObject<Review>(form["Review"]);
+                _db.Reviews.Add(Review);
+                _db.SaveChanges();
+                return Ok("success");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Message" + e);
+            }
+        }
 
+        [HttpPost]
+        public async Task<Object> CreateQuery(IFormCollection form)
+        {
+            try
+            {
+                var Query = JsonConvert.DeserializeObject<Query>(form["Query"]);
+                _db.Queries.Add(Query);
+                _db.SaveChanges();
+                return Ok("success");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Message" + e);
+            }
+        }
 
     }
 }

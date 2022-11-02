@@ -17,6 +17,11 @@
                         <input type="hidden" asp-for="PharmacyLatitude" />
                         <input type="hidden" asp-for="PharmacyLogo" />
                         <input type="hidden" asp-for="CoverImage" />
+                        <input type="hidden" asp-for="VendorId" />
+                        <input type="hidden" asp-for="Vendors.Password" />
+                        <input type="hidden" asp-for="Vendors.VendorEmail" />
+                        <input type="hidden" asp-for="Vendors.VendorProfilePicture" />
+                        <input type="hidden" asp-for="Vendors.VendorUserName" />
                         <input type="hidden" asp-for="Date" />
 
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -86,7 +91,7 @@
                                         }
                                         else
                                         {
-                                            <img src="~/Images/@Model.PharmacyLogo" id="showCoverImageId" class="align-content-center" style="width:150px; height:150px;" />
+                                            <img src="~/Images/@Model.PharmacyLogo" id="showLogoImageId" class="align-content-center" style="width:150px; height:150px;" />
                                         }
                                     </div>
                                 </div>
@@ -159,26 +164,26 @@
                             </div>
 
                             @*                            <div class="col-sm-6">
-            <div class="form-group">
-                <label asp-for="PharmacyLocation" class="control-label"></label>
-                <input asp-for="PharmacyLocation" required class="form-control" />
-                <span asp-validation-for="PharmacyLocation" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="PharmacyLocation" class="control-label"></label>
+                    <input asp-for="PharmacyLocation" required class="form-control" />
+                    <span asp-validation-for="PharmacyLocation" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 col-12">
-            <div class="form-group">
-                <label asp-for="PharmacyLongitude" class="control-label"></label>
-                <input asp-for="PharmacyLongitude" required class="form-control" />
-                <span asp-validation-for="PharmacyLongitude" class="text-danger"></span>
+            <div class="col-md-6 col-12">
+                <div class="form-group">
+                    <label asp-for="PharmacyLongitude" class="control-label"></label>
+                    <input asp-for="PharmacyLongitude" required class="form-control" />
+                    <span asp-validation-for="PharmacyLongitude" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label asp-for="PharmacyLatitude" class="control-label"></label>
-                <input asp-for="PharmacyLatitude" required class="form-control" />
-                <span asp-validation-for="PharmacyLatitude" class="text-danger"></span>
-            </div>
-        </div>*@
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label asp-for="PharmacyLatitude" class="control-label"></label>
+                    <input asp-for="PharmacyLatitude" required class="form-control" />
+                    <span asp-validation-for="PharmacyLatitude" class="text-danger"></span>
+                </div>
+            </div>*@
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
                                     <label asp-for="PharmacyAddress" class="control-label"></label>
@@ -194,41 +199,41 @@
                                 </div>
                             </div>
                             @*@if (Model.PharmacyId == 0)
-        {
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
+            {
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label asp-for="Password" class="control-label"></label>
-                    <input asp-for="Password" id="Password" class="form-control" onkeyup="ValidatePassword()" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" id="Password" class="form-control" onkeyup="ValidatePassword()" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">Confirm Password</label>
-                    <input type="password" id="#ConfirmPassword" class="form-control" onkeyup="ValidatePassword()" />
-                    <span id="#CustomValidation" class="text-danger"></span>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">Confirm Password</label>
+                        <input type="password" id="#ConfirmPassword" class="form-control" onkeyup="ValidatePassword()" />
+                        <span id="#CustomValidation" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
-        }
-        else
-        {
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" readonly />
-                    <span asp-validation-for="Email" class="text-danger"></span>
+            }
+            else
+            {
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" readonly />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
-            <input type="hidden" asp-for="Password" />
+                <input type="hidden" asp-for="Password" />
 
-        }*@
+            }*@
                             <div class="col-sm-12">
                                 <button id="SubmitButton" type="submit" class="btn btn-primary btn-round">Submit</button>
                             </div>

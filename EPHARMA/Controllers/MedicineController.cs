@@ -83,6 +83,14 @@ namespace EPHARMA.Controllers
                 }
                 _context.SaveChanges();
 
+                if (MedicineImage != null) //Logo is edited(changed)
+                {
+                    _imageService.RemoveImage(NewMedicine.Medicines.MedicineImage);
+                    uniqueFileName = _imageService.AddImage(MedicineImage);
+                    _medicine.MedicineImage = uniqueFileName;
+                }
+                _context.Entry(_medicine).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                _context.SaveChanges();
             }
             return RedirectToAction("Index");
         }
@@ -107,5 +115,13 @@ namespace EPHARMA.Controllers
             return RedirectToAction("Index");
 
         }
+        public async Task<JsonResult> ChangeMedicineStatus(int id)
+        {
+            var doc = _context.Medicines.Find(id);
+            doc.AvailabilityStatus = !doc.AvailabilityStatus;
+            _context.SaveChanges();
+            return Json("Success");
+        }
+
     }
 }

@@ -9,6 +9,11 @@
     }
 }
 <form asp-action="Create" enctype="multipart/form-data" class="form form-vertical">
+    <input type="hidden" asp-for="Medicines.MedicineId" />
+
+    <input type="hidden" asp-for="Medicines.Date" />
+    <input type="hidden" asp-for="Medicines.AvailabilityStatus" />
+    <input type="hidden" asp-for="Medicines.Status" />
     <section id="multiple-column-form">
         <div class="row">
             <div class="col-12">
@@ -20,10 +25,10 @@
                     </div>
                     <div class="card-body">
                         @*<div class="col-md-6">
-            <select id="dates-field2" class="form-control" asp-for="CategoryIds" multiple="multiple" asp-items="ViewBag.AllCategories" placeholder="testing">
-                <option value="" disabled></option>
-            </select>
-        </div>*@
+                                <select id="dates-field2" class="form-control" asp-for="CategoryIds" multiple="multiple" asp-items="ViewBag.AllCategories" placeholder="testing">
+                                    <option value="" disabled></option>
+                                </select>
+                            </div>*@
 
                         <div class="col-sm-12">
                             <div class="form-group">
@@ -74,7 +79,7 @@
                                         }
                                         else
                                         {
-                                            <img src="~/Images/@Model.Medicines.MedicineImage" id="showCoverImageId" class="align-content-center" style="width:200px; height:200px;" />
+                                            <img src="~/Images/@Model.Medicines.MedicineImage" id="showLogoImageId" class="align-content-center" style="width:200px; height:200px;" />
                                         }
                                     </div>
                                 </div>

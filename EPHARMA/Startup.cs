@@ -18,6 +18,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,7 +45,10 @@ namespace EPHARMA
                 option.SignIn.RequireConfirmedEmail = false;
             })
                   .AddEntityFrameworkStores<ApplicationDbContext>()
+                  .AddDefaultUI()            
                   .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options =>
+    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
             services.AddControllersWithViews();
 
             services.AddCors(options =>
@@ -72,61 +76,20 @@ namespace EPHARMA
             //         options.Conventions.AddAreaPageRoute("Identity", "/Account/Login", "");
             //     }
             //);
-            /*  services.AddAuthorization(options => {
-                  options.AddPolicy("readpolicy",
-                      builder => builder.RequireRole("Admin", "Pharmacy", "Customer", "Doctor"));
-                  options.AddPolicy("writepolicy",
-                      builder => builder.RequireRole("Admin", "Doctor"));
-              });*/
-            services.AddAuthentication(options =>
+            services.AddAuthorization(options =>
             {
-                // Identity made Cookie authentication the default.
-                // However, we want JWT Bearer Auth to be the default.
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.AddPolicy("readpolicy",
+                    builder => builder.RequireRole("Admin", "Pharmacy", "Customer", "Doctor"));
+                options.AddPolicy("writepolicy",
+                    builder => builder.RequireRole("Admin", "Doctor"));
             });
-          /* .AddJwtBearer(options =>
-           {
-               options.TokenValidationParameters = new TokenValidationParameters
-               {
-                   ValidateIssuer = true,
-                   ValidateAudience = true,
-                   ValidateIssuerSigningKey = true,
-                   ValidateLifetime = false,
-                   RequireExpirationTime = false,
-                   ValidIssuer = Configuration["Jwt:Issuer"],
-                   ValidAudience = Configuration["Jwt:Audience"],
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SecretKey"])),
-                   ClockSkew = TimeSpan.Zero
-               };
-               options.Events = new JwtBearerEvents
-               {
-                   OnAuthenticationFailed = context =>
-                   {
-                       if (context.Exception.GetType() == typeof(SecurityTokenExpiredException)) // for me my hub endpoint is ConnectionHub
-                         {
-                           context.Response.Headers.Add("Token-Expired", "true");
-                       }
-                       return Task.CompletedTask;
-                   },
-                   OnMessageReceived = context =>
-                   {
-                       var accessToken = context.Request.Query["access_token"];
-                       var path = context.HttpContext.Request.Path;
-                       if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/signalRServer"))) // for me my hub endpoint is ConnectionHub
-                         {
-                           context.Token = accessToken;
-                       }
-                       return Task.CompletedTask;
-                   }
-               };
-           });
-*/
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("ElevatedRights", policy =>
-            //          policy.RequireRole("Administrator", "Pharmacy", "Customer", "Doctor"));
-            //});
+           
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddRazorPages();
             services.AddTransient<IImageInterface, ImageService>();
             services.AddControllers().AddNewtonsoftJson(options =>
@@ -156,7 +119,7 @@ namespace EPHARMA
             app.UseStaticFiles();
             app.UseCors(MyAllowSpecificOrigins);
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -1,0 +1,216 @@
+﻿@model EPHARMA.ViewModel.OrderViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<form asp-action="Create" enctype="multipart/form-data" class="form form-vertical">
+    <section id="multiple-column-form">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">@(Model.Order.OrderId == 0 ? "Create Order" : "Edit Order")</h2>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" asp-for="Order.OrderId" />
+                        <input type="hidden" asp-for="Order.CityId" />
+                        <input type="hidden" asp-for="Order.CustomerId" />
+                        <input type="hidden" asp-for="Order.PharmacyId" />
+                        <input type="hidden" asp-for="Order.EndTime" />
+                        <input type="hidden" asp-for="Order.RecievingTime" />
+                        <input type="hidden" asp-for="Order.SpecialInstructions" />
+                        <input type="hidden" asp-for="Order.OrderLongitude" />
+                        <input type="hidden" asp-for="Order.OrderLatitude" />
+                        <input type="hidden" asp-for="Order.OrderDateTime" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row clearfix">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label asp-for="Order.OrderCode" class="control-label">Order Code</label>
+                                    <input asp-for="Order.OrderCode" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorName" class="text-danger"></span>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.OrderName" class="control-label">Order Name</label>
+                                    <input asp-for="Order.OrderName" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.Customers.CustomerName" class="control-label"></label>
+                                    <input asp-for="Order.Customers.CustomerName" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.OrderAddress" class="control-label">Order Address</label>
+                                    <input asp-for="Order.OrderAddress" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.Location" class="control-label"></label>
+                                    <input asp-for="Order.Location" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.City.CityName" class="control-label">City Name</label>
+                                    <input asp-for="Order.City.CityName" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.Pharmacies.PharmacyName" class="control-label">Pharmacy Name</label>
+                                    <input asp-for="Order.Pharmacies.PharmacyName" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+
+
+                            @if (Model.Order.HasPrescriptionDrugs)
+                            {
+                                <div class="col-sm-12">
+                                    <h4>Prescription Image</h4>
+                                    <div class="row clearfix">
+
+                                        <div class="col-sm-12">
+                                            @if (Model.Prescription.Image == null)
+                                            {
+                                                <img src="~/Images/ChooseImage.jpg" id="showProfileImageId" class="float-right" style="width:240px; height:150px;" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/Images/@Model.Prescription.Image" id="showCoverImageId" class="float-right" style="width:240px; height:150px;" />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.TotalQuantity" class="control-label">Total Quantity</label>
+                                    <input asp-for="Order.TotalQuantity" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.SubTotal" class="control-label"></label>
+                                    <input asp-for="Order.SubTotal" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.TotalBill" class="control-label">Total Bill</label>
+                                    <input asp-for="Order.TotalBill" readonly class="form-control" />
+                                    @*<span asp-validation-for="Vendors.VendorCNIC" class="text-danger"></span>*@
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+
+                                            <th>
+                                                Medicine Name
+                                            </th>
+                                            <th>
+                                                Quantity
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.OrderMedicine)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Medicines.MedicineName)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Quantity)
+                                                </td>
+                                                <td>
+                                                    @if (item.Status == true)
+                                                    {
+                                                        <div style="color:green">Active</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="color:red">Inactive</div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Order.OrderStatus" class="control-label">Order Status</label>
+                                    <select asp-for="Order.OrderStatus" required class="form-control">
+                                        <option>Pending</option>
+                                        <option>Active</option>
+                                        <option>Rejected</option>
+                                        <option>Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                                <div class="col-sm-1">
+                                    <button id="SubmitButton" type="submit" class="btn btn-primary btn-round">Submit</button>
+                                </div>
+                                <div class="col-sm-3 ml-2"
+                                <a asp-action="Details">
+                                    <button class="btn btn-primary mb-2 d-flex align-items-center">
+                                        Back to Orders
+                                    </button>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+@*@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+    <script>
+        function ValidatePassword() {
+            var ConfirmPassword = document.getElementById("#ConfirmPassword").value;
+            if (ConfirmPassword != $("#Password").val()) {
+                document.getElementById("#CustomValidation").innerHTML = "Password & Confirm Password doesn't match"
+                $("#SubmitButton").attr('disabled', true);
+            }
+            else {
+                document.getElementById("#CustomValidation").innerHTML = "";
+                $("#SubmitButton").attr('disabled', false);
+            }
+        }
+    </script>*@

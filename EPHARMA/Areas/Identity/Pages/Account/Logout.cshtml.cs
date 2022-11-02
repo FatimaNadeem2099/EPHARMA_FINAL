@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,22 +25,23 @@ namespace EPHARMA.Areas.Identity.Pages.Account
 
         public void OnGet()
         {
+            OnPost(null);
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
+            HttpContext.Response.Cookies.Delete(".AspNetCore.Cookies");
+            HttpContext.Session.Remove(User.FindFirstValue(ClaimTypes.NameIdentifier));
             _logger.LogInformation("User logged out.");
-            HttpContext.Session.Clear();
-            return LocalRedirect("~/Identity/Account/Login");
-            //if (returnUrl != null)
-            //{
-            //    return LocalRedirect(returnUrl);
-            //}
-            //else
-            //{
-            //    return RedirectToPage();
-            //}
+            if (returnUrl != null)
+            {
+                return LocalRedirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToPage();
+            }
         }
     }
 }

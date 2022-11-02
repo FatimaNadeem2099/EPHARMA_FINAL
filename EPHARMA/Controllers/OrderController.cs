@@ -21,43 +21,78 @@ namespace EPHARMA.Controllers
         }
         public IActionResult Index()
         {
-            List<Order> AllOrders = _context.Orders.Include(x => x.Pharmacies).Include(x => x.Customers).Where(x => x.Status).ToList();      
-            
+            List<Order> AllOrders = _context.Orders.Include(x => x.Pharmacies).Include(x => x.Customers).Where(x => x.Status).ToList();
+
             return View(AllOrders);
         }
 
         public IActionResult Details(int id)
         {
             OrderViewModel order = new OrderViewModel();
-             order.Order = _context.Orders.Include(c => c.Customers).Where(a => a.OrderId == id).FirstOrDefault();
+            order.Order = _context.Orders.Include(c => c.Customers).Where(a => a.OrderId == id).FirstOrDefault();
             order.OrderMedicine = _context.OrderMedicines.Include(m => m.Medicines).Where(a => a.OrderId == id).ToList();
             order.Prescription = _context.OrderPrescriptions.Where(a => a.OrderId == id).FirstOrDefault();
             return View(order);
         }
         public IActionResult Create(int id)
         {
-            ViewBag.Pharmacy = new SelectList(_context.Pharmacies.Where(x => x.Status), "PharmacyId", "PharmacyName");
-            ViewBag.Customer = new SelectList(_context.Customers.Where(x => x.Status), "CustomerId", "CustomerName");
+            OrderViewModel orderViewModel = new OrderViewModel();
+            orderViewModel.Order = _context.Orders.Include(x => x.Customers).Include(x => x.Pharmacies).Include(x => x.City).FirstOrDefault(x => x.OrderId == id);
+            orderViewModel.Prescription = _context.OrderPrescriptions.FirstOrDefault(x => x.OrderId == id);
+            orderViewModel.OrderMedicine = _context.OrderMedicines.Include(x => x.Medicines).Where(x => x.OrderId == id).ToList();
+            //ViewBag.Customer = new SelectList(_context.Customers.Where(x => x.Status), "CustomerId", "CustomerName");
             if (id == 0)
             {
-                _order = new Order();
+                orderViewModel.Order = new Order();
+                return View(orderViewModel);
             }
             else
             {
-                _order = _context.Orders.Find(id);
+                orderViewModel.Order = _context.Orders.Find(id);
+                return View(orderViewModel);
             }
-            return View(_order);
+
         }
         [HttpPost]
-        public IActionResult Create(Order NewOrder)
+        public IActionResult Create(OrderViewModel orderViewModel)
         {
-            if (NewOrder.OrderId == 0)
+            if (orderViewModel.Order.OrderId == 0)
             {
-                _context.Orders.Add(NewOrder);
+                _context.Orders.Add(orderViewModel.Order);
+                _context.SaveChanges();
             }
             else
             {
-                _context.Entry(NewOrder).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                var order = _context.Orders.FirstOrDefault(x => x.OrderId == orderViewModel.Order.OrderId);
+                if (orderViewModel.Order.OrderStatus == "Pending")
+                {
+                    order.OrderStatus = "Pending";
+                }
+                else if (orderViewModel.Order.OrderStatus == "Active")
+                {
+                    order.OrderStatus = "Active";
+                }
+                else if (orderViewModel.Order.OrderStatus == "Rejected")
+                {
+                    order.Status = false;
+                    order.OrderStatus = "Rejected";
+                    var orderMedicineStatus = _context.OrderMedicines.Where(x => x.OrderId == order.OrderId).ToList();
+                    foreach (var item in orderMedicineStatus)
+                    {
+                        item.Status = false;
+                    }
+                }
+                else if (orderViewModel.Order.OrderStatus == "Completed")
+                {
+                    order.IsFinished = true;
+                    order.OrderStatus = "Completed";
+                    var orderMedicineStatus = _context.OrderMedicines.Where(x => x.OrderId == order.OrderId).ToList();
+                    foreach (var item in orderMedicineStatus)
+                    {
+                        item.Status = false;
+                    }
+                }
+                _context.Entry(order).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             }
             _context.SaveChanges();
             return RedirectToAction("Index");

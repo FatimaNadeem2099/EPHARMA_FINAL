@@ -88,7 +88,7 @@
                                             {
                                                 <div class="fonticon-container">
                                                     <div class="fonticon-wrap" style="margin-bottom: 0px;">
-                                                        <i onclick="ChangeDoctorStatus(@item.PharmacyId)" class="bx bx-trash"></i>
+                                                        <i onclick="ChangePharmacyStatus(@item.PharmacyId)" class="bx bx-power-off"></i>
                                                     </div>
                                                 </div>
                                             }
@@ -96,7 +96,7 @@
                                             {
                                                 <div class="fonticon-container">
                                                     <div class="fonticon-wrap" style="margin-bottom: 0px;">
-                                                        <i onclick="ChangeDoctorStatus(@item.PharmacyId)" class="bx bx-trash"></i>
+                                                        <i onclick="ChangePharmacyStatus(@item.PharmacyId)" class="bx bx-power-off"></i>
                                                     </div>
                                                 </div>
                                             }
@@ -114,3 +114,25 @@
         </div>
     </div>
 </div>
+<script>
+    function ChangePharmacyStatus(id) {
+        $.ajax({
+            type: "Get",
+            url: '/Pharmacy/ChangePharmacyStatus',
+            data: { id: id },
+            success: function (json) {
+                if (json == "Success") {
+                    //swal("Updated!", "Customer Status Updated!", "success");
+                    window.location.reload();
+                }
+
+
+                // swal("Updated!", "Customer Status Updated!", "success");
+                //window.location.reload();
+            },
+            error: function (xhr) {
+                //  swal("Error", "Please Try again later!", "error");
+            }
+        });
+    }
+    </script>

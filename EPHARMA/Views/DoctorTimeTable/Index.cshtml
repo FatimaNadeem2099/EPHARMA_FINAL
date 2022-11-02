@@ -36,7 +36,6 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.NumberOfSlots)
                                         </th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,18 +49,15 @@
                                             @Html.DisplayFor(modelItem => item.Day)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.StartTime)
+                                            @Html.DisplayFor(modelItem => item.StartTime.TimeOfDay)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.EndTime)
+                                            @Html.DisplayFor(modelItem => item.EndTime.TimeOfDay)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.NumberOfSlots)
                                         </td>
-                                        <td>
-                                            <a asp-action="Create" asp-route-id="@item.DoctorTimeTableId"><i class='bx bxs-eyedropper' style="height:25px;width:25px;color:#7367f0"></i></a> |
-                                            <a href="#" onclick="DeleteRecord(@item.DoctorTimeTableId, '/DoctorTimeTable/Delete')"><i class="Danger bx bx-trash-alt" style="height:25px;width:25px;color:#ea5455"></i></a>
-                                        </td>
+                                      
                                     </tr>
                                     }
                                 </tbody>

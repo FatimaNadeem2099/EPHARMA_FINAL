@@ -63,7 +63,7 @@
                                         </td>
 
                                         <td>
-                                            @if (item.Status == true)
+                                            @if (item.AvailabilityStatus == true)
                                             {
                                                 <div style="color:green">Available</div>
                                             }
@@ -84,11 +84,11 @@
 
 
 
-                                            @if (!item.Status)
+                                            @if (!item.AvailabilityStatus)
                                             {
                                                 <div class="fonticon-container">
                                                     <div class="fonticon-wrap" style="margin-bottom: 0px;">
-                                                        <i onclick="ChangeDoctorStatus(@item.MedicineId)" class="bx bx-trash"></i>
+                                                        <i onclick="ChangeMedicineStatus(@item.MedicineId)" class="bx bx-power-off"></i>
                                                     </div>
                                                 </div>
                                             }
@@ -96,7 +96,7 @@
                                             {
                                                 <div class="fonticon-container">
                                                     <div class="fonticon-wrap" style="margin-bottom: 0px;">
-                                                        <i onclick="ChangeDoctorStatus(@item.MedicineId)" class="bx bx-trash"></i>
+                                                        <i onclick="ChangeMedicineStatus(@item.MedicineId)" class="bx bx-power-off"></i>
                                                     </div>
                                                 </div>
                                             }
@@ -113,3 +113,25 @@
         </div>
     </div>
 </div>
+<script>
+    function ChangeMedicineStatus(id) {
+        $.ajax({
+            type: "Get",
+            url: '/Medicine/ChangeMedicineStatus',
+            data: { id: id },
+            success: function (json) {
+                if (json == "Success") {
+                    //swal("Updated!", "Customer Status Updated!", "success");
+                    window.location.reload();
+                }
+
+
+                // swal("Updated!", "Customer Status Updated!", "success");
+                //window.location.reload();
+            },
+            error: function (xhr) {
+                //  swal("Error", "Please Try again later!", "error");
+            }
+        });
+    }
+    </script>

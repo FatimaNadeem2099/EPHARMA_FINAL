@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,14 +22,30 @@ namespace EPHARMA.Controllers
         }
         public IActionResult Index()
         {
-            
-            var doctorTimetable = _context.DoctorTimeTables.Include(d => d.Doctors).Where(x => x.Status).ToList();
+          
 
+            var doctorTimetable = _context.DoctorTimeTables.Include(d => d.Doctors).Where(x => x.Status).OrderBy(x => x.Doctors.DoctorName).ToList();
+           
             return View(doctorTimetable);
         }
         public IActionResult WeeklyTimetable(int id)
         {
             //a.Date.Date >= DateTime.Now.Date && ADD CONDITION
+
+            DateTime startOfWeek = DateTime.Today.AddDays(
+     (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek -
+     (int)DateTime.Today.DayOfWeek);
+
+            string result = string.Join("," + Environment.NewLine, Enumerable
+              .Range(0, 7)
+              .Select(i => startOfWeek
+                 .AddDays(i)));
+            var resultarray = result.Split(',');
+            var dt = new List<DateTime>();
+            foreach(var res in resultarray)
+            {
+                dt.Add(Convert.ToDateTime(res));
+            }
             var WeeklyTimetable = _context.DoctorWeeklyTimeSheets.Include(x => x.Doctors).Where(a =>  a.DoctorId == id).ToList();
             List<DoctorWeeklyTimeSheet> monday = new List<DoctorWeeklyTimeSheet>();
             List<DoctorWeeklyTimeSheet> tuesday = new List<DoctorWeeklyTimeSheet>();
@@ -41,30 +58,44 @@ namespace EPHARMA.Controllers
             {
                 if(time.WeekDay == "Monday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     monday.Add(time);
                 }
                 if (time.WeekDay == "Tuesday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     tuesday.Add(time);
                 }
                 if (time.WeekDay == "Wednesday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     wednesday.Add(time);
                 }
                 if (time.WeekDay == "Thursday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     thursday.Add(time);
                 }
                 if (time.WeekDay == "Friday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     friday.Add(time);
                 }
                 if (time.WeekDay == "Saturday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     saturday.Add(time);
                 }
                 if (time.WeekDay == "Sunday")
                 {
+                    var datecurrent = dt.Where(x => x.DayOfWeek.ToString() == time.WeekDay).FirstOrDefault();
+                    time.Date = datecurrent;
                     sunday.Add(time);
                 }
             }
@@ -87,7 +118,17 @@ namespace EPHARMA.Controllers
 
                 return Redirect(link);
             }
-            ViewBag.DoctorId = new SelectList(_context.Doctors.Where(x => x.Status), "DoctorId", "DoctorName");
+            var AllDoctorId = _context.Doctors.Where(x => x.Status).ToList();
+            var DoctorId = new List<Doctor>();
+            foreach(var doctor in AllDoctorId)
+            {
+                var timetable = _context.DoctorTimeTables.Where(x => x.DoctorId == doctor.DoctorId).FirstOrDefault();
+                if(timetable == null)
+                {
+                    DoctorId.Add(doctor);
+                }
+            }
+            ViewBag.DoctorId = new SelectList(DoctorId, "DoctorId", "DoctorName");
           
             return View();
         }
@@ -140,6 +181,14 @@ namespace EPHARMA.Controllers
                 string link = Request.Scheme + "://" + Request.Host + "/Doctor/Index";
                 return Redirect(link);
             }
+        }
+
+        public async Task<JsonResult> ChangeAvailabilityStatus(int id)
+        {
+            var doc = _context.DoctorWeeklyTimeSheets.Find(id);
+            doc.Available = !doc.Available;
+            _context.SaveChanges();
+            return Json("Success");
         }
         [HttpDelete]
         public IActionResult Delete(int id)

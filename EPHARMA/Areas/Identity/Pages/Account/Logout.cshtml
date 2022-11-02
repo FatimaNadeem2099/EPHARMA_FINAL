@@ -2,9 +2,29 @@
 @model LogoutModel
 @{
     ViewData["Title"] = "Log out";
+
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    <p>You have successfully logged out of the application.</p>
-</header>
+@*<header>
+        <h1>@ViewData["Title"]</h1>
+        <p>You have successfully logged out of the application.</p>
+    </header>*@
+
+<div style="text-align: center; margin-top:70px">
+    <a></a>
+</div>
+<h1 style="text-align: center; margin-top:10px; font-weight:500">Epharma</h1>
+
+<h4 style="        text-align: center;
+        align-items: center;
+        margin-bottom: 20px;
+">
+    You have successfully logged out of the application.
+</h4>
+<div style="        text-align: center;
+        align-items: center;
+        margin-bottom: 120px;
+" class="form-group">
+    <a asp-page="Login" asp-area="identity" style="text-align: center;" type="submit" class="btn btn-primary">Log in</a>
+</div>

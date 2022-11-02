@@ -32,7 +32,7 @@ namespace EPHARMA.Controllers
         }
         public IActionResult Index()
         {
-            var AllPharmacies = _context.Pharmacies.Include(a => a.Vendors).Where(x => x.Status);
+            var AllPharmacies = _context.Pharmacies.Include(a => a.Vendors);
             return View(AllPharmacies);
         }
 
@@ -90,7 +90,7 @@ namespace EPHARMA.Controllers
             }
             else
             {
-                _pharmacy = _context.Pharmacies.Find(id);
+                _pharmacy = _context.Pharmacies.Include(v => v.Vendors).Where(x => x.PharmacyId==id).FirstOrDefault();
             }
             return View(_pharmacy);
         }
@@ -133,11 +133,21 @@ namespace EPHARMA.Controllers
                     uniqueFileName = _imageService.AddImage(CoverImage);
                     pharmacy.CoverImage = uniqueFileName;
                 }
+                pharmacy.Vendors.VendorId =pharmacy.VendorId ;
                 _context.Entry(pharmacy).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 _context.SaveChanges();
             }
             _context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        public async Task<JsonResult> ChangePharmacyStatus(int id)
+        {
+            var doc = _context.Pharmacies.Find(id);
+            doc.Status = !doc.Status;
+            _context.SaveChanges();
+            return Json("Success");
         }
         [HttpDelete]
         public IActionResult Delete(int id)
