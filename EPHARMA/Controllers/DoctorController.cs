@@ -2,6 +2,7 @@
 using EPHARMA.Models;
 using EPHARMA.Services;
 using EPHARMA.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EPHARMA.Controllers
@@ -30,10 +32,30 @@ namespace EPHARMA.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        public IActionResult Index()
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<IActionResult> Index()
         {
-            var AllDoctors = _context.Doctors.Include(a => a.Categories);
-            return View(AllDoctors);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role.ElementAt(0) == "Admin")
+            {
+                var AllDoctors = _context.Doctors.Include(a => a.Categories);
+                return View(AllDoctors);
+            }
+            else
+            {
+                var doc = _context.Doctors.Where(a => a.DoctorEmail == user.Email).FirstOrDefault();
+                if (doc != null)
+                {
+                    var AllDoctors = _context.Doctors.Include(a => a.Categories).Where(x  => x.DoctorId==doc.DoctorId).ToList();
+                    return View(AllDoctors);
+                }
+                else
+                {
+                    return View(null);
+                }
+                }
         }
 
         public async Task<JsonResult> ChangeDoctorStatus(int id)

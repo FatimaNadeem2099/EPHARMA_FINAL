@@ -1,12 +1,15 @@
 ﻿using EPHARMA.Data;
 using EPHARMA.Models;
 using EPHARMA.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EPHARMA.Controllers
@@ -15,15 +18,34 @@ namespace EPHARMA.Controllers
     {
         private readonly ApplicationDbContext _context;
         private Order _order;
-        public OrderController(ApplicationDbContext Context)
+        private readonly UserManager<IdentityUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
+        public OrderController(ApplicationDbContext Context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = Context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
-        public IActionResult Index()
+        [Authorize(Roles = "Admin,Vendor")]
+        public async Task<IActionResult> Index()
         {
-            List<Order> AllOrders = _context.Orders.Include(x => x.Pharmacies).Include(x => x.Customers).Where(x => x.Status).ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role.ElementAt(0) == "Admin")
+            {
+                List<Order> AllOrders = _context.Orders.Include(x => x.Pharmacies).Include(x => x.Customers).Where(x => x.Status).ToList();
+                return View(AllOrders);
+            }
+            else
+            {
+                var vendor = _context.Vendors.Where(v => v.VendorEmail == user.Email).FirstOrDefault();
+                var pharma = _context.Pharmacies.Where(v => v.VendorId == vendor.VendorId).FirstOrDefault();
+                List<Order> AllOrders = _context.Orders.Include(x => x.Pharmacies).Include(x => x.Customers).Where(x => x.Status && x.PharmacyId==pharma.PharmacyId).ToList();
+                return View(AllOrders);
+            }
 
-            return View(AllOrders);
+           
         }
 
         public IActionResult Details(int id)

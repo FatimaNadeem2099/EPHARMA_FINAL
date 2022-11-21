@@ -1,11 +1,14 @@
 ﻿using EPHARMA.Data;
 using EPHARMA.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EPHARMA.Controllers
@@ -14,16 +17,40 @@ namespace EPHARMA.Controllers
     {
         private readonly ApplicationDbContext _context;
         private Appointment _appointment;
-        public AppointmentController(ApplicationDbContext Context)
+        private readonly UserManager<IdentityUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
+        public AppointmentController(ApplicationDbContext Context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = Context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
-        public IActionResult Index()
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<IActionResult> Index()
         {
-            var AllAppointments = _context.Appointments.Include(d => d.Doctors).Where(x => x.Status);
-            return View(AllAppointments);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role.ElementAt(0) == "Admin")
+            {
+                var AllAppointments = _context.Appointments.Include(d => d.Doctors).Where(x => x.Status);
+                return View(AllAppointments);
+            }
+            else {
+                var doc = _context.Doctors.Where(a => a.DoctorEmail == user.Email).FirstOrDefault();
+                if (doc != null)
+                {
+                    var AllAppointments = _context.Appointments.Include(d => d.Doctors).Where(x => x.Status && x.DoctorId == doc.DoctorId);
+                    return View(AllAppointments);
+                }
+                else
+                {
+                    return View(null);
+                }
+            }
         }
 
+        
         public IActionResult Create(int id)
         {
             ViewBag.CustomerId = new SelectList(_context.Customers.Where(x => x.Status), "CustomerId", "CustomerName");

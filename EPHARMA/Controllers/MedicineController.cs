@@ -2,13 +2,16 @@
 using EPHARMA.Models;
 using EPHARMA.Services.Interface;
 using EPHARMA.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EPHARMA.Controllers
@@ -18,20 +21,52 @@ namespace EPHARMA.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IImageInterface _imageService;
         private Medicine _medicine;
-        public MedicineController(ApplicationDbContext Context, IImageInterface ImageService)
+        private readonly UserManager<IdentityUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
+        public MedicineController(ApplicationDbContext Context, IImageInterface ImageService, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = Context;
             _imageService = ImageService;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
-        public IActionResult Index()
+        [Authorize(Roles = "Admin,Vendor")]
+        public async Task<IActionResult> Index()
         {
-            var AllMedicines = _context.Medicines.Include(x =>x.Pharmacies).Where(x => x.Status);
-            return View(AllMedicines);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role.ElementAt(0) == "Admin")
+            {
+                var AllMedicines = _context.Medicines.Include(x => x.Pharmacies).Where(x => x.Status);
+                return View(AllMedicines);
+            }
+            else
+            {
+                var vendor = _context.Vendors.Where(v => v.VendorEmail == user.Email).FirstOrDefault();
+                var pharma = _context.Pharmacies.Where(v => v.VendorId == vendor.VendorId).FirstOrDefault();
+                var AllMedicines = _context.Medicines.Include(x => x.Pharmacies).Where(x => x.Status && x.PharmacyId == pharma.PharmacyId);
+                return View(AllMedicines);
+            }
+           
         }
-        public IActionResult Create(int id)
+        [Authorize(Roles = "Admin,Vendor")]
+        public async Task<IActionResult> Create(int id)
         {
             MedicineViewModel medicine_ViewModel = new MedicineViewModel();
-            ViewBag.PharmacyId = new SelectList(_context.Pharmacies.Where(x => x.Status), "PharmacyId", "PharmacyName");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            var role = await _userManager.GetRolesAsync(user);
+            if (role.ElementAt(0) == "Admin")
+            {
+                ViewBag.PharmacyId = new SelectList(_context.Pharmacies.Where(x => x.Status), "PharmacyId", "PharmacyName");
+            }
+            else
+            {
+                var vendor = _context.Vendors.Where(v => v.VendorEmail == user.Email).FirstOrDefault();
+                var pharma = _context.Pharmacies.Where(v => v.VendorId == vendor.VendorId).FirstOrDefault();
+                ViewBag.PharmacyId = new SelectList(_context.Pharmacies.Where(x => x.Status && x.PharmacyId == pharma.PharmacyId), "PharmacyId", "PharmacyName");
+            }
             ViewBag.AllCategories = new SelectList(_context.Categories.Where(x => x.Status && x.CategoryType=="Medicine"), "CategoryId", "CategoryTitle");
             if (id == 0)
             {
